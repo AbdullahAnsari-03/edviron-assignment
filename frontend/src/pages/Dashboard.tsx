@@ -330,7 +330,7 @@ const Dashboard: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200/50 dark:divide-gray-700/50">
-                  {currentTransactions.map((transaction, index) => (
+                  {currentTransactions.map((transaction) => (
                     <tr
                       key={transaction._id}
                       className=" hover:bg-gray-50/50 dark:hover:bg-gray-700/30

@@ -26,7 +26,7 @@ const SchoolTransactions: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode] = useState(false);
 
   const fetchSchoolTransactions = async () => {
     if (!schoolId.trim()) {
