@@ -7,6 +7,8 @@ import { HealthModule } from './health/health.module';
 import { PaymentsModule } from './payments/payments.module';
 import { AuthModule } from './auth/auth.module';
 import { createDatabaseIndexes } from './database/indexes';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { createDatabaseIndexes } from './database/indexes';
     PaymentsModule,
     AuthModule,
   ],
+  controllers: [AppController],   
+  providers: [AppService],        
 })
 export class AppModule implements OnModuleInit {
   constructor(@InjectConnection() private connection: Connection) {}
