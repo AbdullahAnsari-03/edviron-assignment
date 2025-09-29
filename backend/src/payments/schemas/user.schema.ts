@@ -1,4 +1,4 @@
-// CREATE NEW FILE: src/schemas/user.schema.ts
+// src/schemas/user.schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
@@ -11,10 +11,7 @@ export class User extends Document {
   password: string;
 
   @Prop({ required: true })
-  name: string;
-
-  @Prop({ required: true })
-  school_id: string;
+  name: string;   
 
   @Prop({ default: 'user' })
   role: string;

@@ -13,7 +13,7 @@ export async function createDatabaseIndexes(connection: Connection) {
 
   // Indexes for User collection
   await connection.collection('users').createIndex({ email: 1 }, { unique: true });
-  await connection.collection('users').createIndex({ school_id: 1 });
+  // await connection.collection('users').createIndex({ school_id: 1 });
 
   console.log('Database indexes created successfully');
 }

@@ -1,27 +1,33 @@
 import React, { useState } from 'react';
 import { authAPI } from '../services/api';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-const Login: React.FC = () => {
+const Register: React.FC = () => {
+  const [name, setName] = useState('');                 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
     setLoading(true);
-    setError('');
-
     try {
-      const response = await authAPI.login(email, password);
-      localStorage.setItem('token', response.data.access_token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      window.location.href = '/dashboard';
+      // ✅ send the correct payload matching backend DTO
+      await authAPI.register(email, password, confirmPassword, name);
+      alert('Registration successful! Please login.');
+      navigate('/login');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed');
+      setError(err.response?.data?.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
@@ -36,12 +42,25 @@ const Login: React.FC = () => {
       <div className="relative z-10 max-w-md w-full px-6 py-12">
         <div className="text-center mb-8">
           <h2 className="text-4xl font-extrabold text-white mb-2">School Payments</h2>
-          <p className="text-gray-400">Sign in to your account</p>
+          <p className="text-gray-400">Create your account</p>
         </div>
 
         <div className="bg-gray-800 dark:bg-gray-900 rounded-2xl shadow-2xl p-8 transition-all duration-300 hover:shadow-xl">
           <form className="space-y-6" onSubmit={handleSubmit}>
-            <div className="rounded-md shadow-sm -space-y-px">
+            <div className="space-y-4">
+              {/* Name */}
+              <div>
+                <input
+                  type="text"
+                  required
+                  placeholder="Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="appearance-none rounded-lg relative block w-full px-4 py-3 border border-gray-700 bg-gray-800 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                />
+              </div>
+
+              {/* Email */}
               <div>
                 <input
                   type="email"
@@ -49,9 +68,11 @@ const Login: React.FC = () => {
                   placeholder="Email address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none rounded-lg relative block w-full px-4 py-3 border border-gray-700 bg-gray-800 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 mb-4"
+                  className="appearance-none rounded-lg relative block w-full px-4 py-3 border border-gray-700 bg-gray-800 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 />
               </div>
+
+              {/* Password */}
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -59,13 +80,33 @@ const Login: React.FC = () => {
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  minLength={6}
                   className="appearance-none rounded-lg relative block w-full px-4 py-3 border border-gray-700 bg-gray-800 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 pr-10"
                 />
                 <div
-                  className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-400"
+                  className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-400 hover:text-gray-300"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
+                </div>
+              </div>
+
+              {/* Confirm Password */}
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  required
+                  placeholder="Confirm Password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  minLength={6}
+                  className="appearance-none rounded-lg relative block w-full px-4 py-3 border border-gray-700 bg-gray-800 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 pr-10"
+                />
+                <div
+                  className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-400 hover:text-gray-300"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
                 </div>
               </div>
             </div>
@@ -77,26 +118,19 @@ const Login: React.FC = () => {
               disabled={loading}
               className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 disabled:opacity-50"
             >
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? 'Creating account...' : 'Register'}
             </button>
           </form>
 
-          {/* Registration Link */}
+          {/* Login Link */}
           <div className="mt-4 text-center text-gray-400 text-sm">
-            New user?{' '}
-            <Link 
-              to="/register" 
+            Already have an account?{' '}
+            <Link
+              to="/login"
               className="text-indigo-400 hover:text-indigo-300 font-semibold transition-colors duration-200"
             >
-              Register here
+              Login here
             </Link>
-          </div>
-
-          {/* Demo credentials */}
-          <div className="mt-6 pt-6 border-t border-gray-700 text-center text-gray-300 text-sm">
-            Demo credentials: <br />
-            Email: <span className="font-semibold">test@school.com</span> <br />
-            Password: <span className="font-semibold">password123</span>
           </div>
         </div>
       </div>
@@ -104,4 +138,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default Register;

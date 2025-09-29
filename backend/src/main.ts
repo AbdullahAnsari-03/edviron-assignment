@@ -10,7 +10,7 @@ async function bootstrap() {
   app.enableCors({
    origin: [
   'http://localhost:5173',
-  'https://edviron-assignment-lemon.vercel.app',
+  'https://edviron-assignment-lemon.vercel.app',   
 ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
@@ -19,7 +19,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ 
     whitelist: true, 
     transform: true,
-    forbidNonWhitelisted: true 
+    forbidNonWhitelisted: true
   }));
 
   const config = app.get(ConfigService);

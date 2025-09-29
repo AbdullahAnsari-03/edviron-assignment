@@ -21,10 +21,11 @@ api.interceptors.request.use((config) => {
 export const authAPI = {
   login: (email: string, password: string) =>
     api.post('/auth/login', { email, password }),
-  
-  register: (email: string, password: string, name: string, school_id: string) =>
-    api.post('/auth/register', { email, password, name, school_id }),
+
+  register: (email: string, password: string, confirmPassword: string, name: string) =>
+    api.post('/auth/register', { email, password, confirmPassword, name }),
 };
+
 
 export const paymentsAPI = {
   getTransactions: (params?: any) =>
@@ -39,8 +40,8 @@ export const paymentsAPI = {
   createPayment: (paymentData: any) =>
     api.post('/payments/create-payment', paymentData),
 
-    sendWebhookPayload: (payload: any) => api.post('/payments/webhook', payload),
-
+  sendWebhookPayload: (payload: any) => 
+    api.post('/payments/webhook', payload),
 };
 
 export default api;

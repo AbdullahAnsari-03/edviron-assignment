@@ -1,5 +1,5 @@
 // CREATE: src/auth/auth.service.ts
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
@@ -13,17 +13,30 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(email: string, password: string, name: string, school_id: string) {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new this.userModel({
-      email,
-      password: hashedPassword,
-      name,
-      school_id,
-    });
-    await user.save();
-    return { message: 'User registered successfully' };
+ async register(email: string, password: string, name: string) {
+  const existingUser = await this.userModel.findOne({ email });
+  if (existingUser) {
+    throw new ConflictException('User with this email already exists');
   }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const user = new this.userModel({
+    email,
+    password: hashedPassword,
+    name,   // ✅ changed to name
+  });
+
+  await user.save();
+
+  return {
+    message: 'User registered successfully',
+    user: {
+      email: user.email,
+      name: user.name,   // ✅ changed to name
+    },
+  };
+}
 
   async login(email: string, password: string) {
     const user = await this.userModel.findOne({ email });
@@ -31,10 +44,13 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payload = { email: user.email, sub: user._id, school_id: user.school_id };
+    const payload = { email: user.email, sub: user._id };
     return {
       access_token: this.jwtService.sign(payload),
-      user: { email: user.email, name: user.name, school_id: user.school_id }
+      user: { 
+        email: user.email, 
+        fullName: user.name 
+      }
     };
   }
 }
