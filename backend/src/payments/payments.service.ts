@@ -198,19 +198,38 @@ export class PaymentsService {
 
 
   async getTransactionStatus(custom_order_id: string) {
-    const status = await this.orderStatusModel.findOne({ collect_id: custom_order_id }).select({
-      collect_id: 1,
-      order_amount: 1,
-      transaction_amount: 1,
-      status: 1,
-      payment_time: 1,
-      _id: 0,
-    });
+  const status = await this.orderStatusModel.aggregate([
+    { $match: { collect_id: custom_order_id } },
+    { 
+      $lookup: { 
+        from: 'orders', 
+        localField: 'collect_id', 
+        foreignField: 'collect_request_id', 
+        as: 'order' 
+      } 
+    },
+    { $unwind: '$order' },
+    { 
+      $project: { 
+        collect_id: 1,
+        school_id: '$order.school_id',  // Add this line
+        order_amount: 1,
+        transaction_amount: 1,
+        status: 1,
+        payment_time: 1,
+        payment_mode: 1,
+        payment_details: 1,
+        bank_reference: 1,
+        error_message: 1,
+        _id: 0,
+      } 
+    },
+  ]);
 
-    if (!status) {
-      return { message: 'Transaction not found' };
-    }
-
-    return status;
+  if (!status || status.length === 0) {
+    return { message: 'Transaction not found' };
   }
+
+  return status[0];
+}
 }

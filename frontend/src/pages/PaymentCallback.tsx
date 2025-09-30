@@ -8,6 +8,7 @@ interface TransactionDetails {
   order_amount: number;
   transaction_amount: number;
   status: string;
+  school_id?: string;
   payment_time?: string;
   payment_mode?: string;
   payment_details?: string;
@@ -18,11 +19,11 @@ interface TransactionDetails {
 const PaymentCallback: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  
+
   const [transaction, setTransaction] = useState<TransactionDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  
+
   // Get parameters from URL
   const orderId = searchParams.get('EdvironCollectRequestId') || searchParams.get('collect_request_id');
   const urlStatus = searchParams.get('status');
@@ -54,42 +55,42 @@ const PaymentCallback: React.FC = () => {
   };
 
   useEffect(() => {
-  const doUpdate = async () => {
-    if (!orderId || !urlStatus) return;
+    const doUpdate = async () => {
+      if (!orderId || !urlStatus) return;
 
-    // If DB already matches gateway status, skip
-    if (transaction?.status && transaction.status.toUpperCase() === urlStatus.toUpperCase()) {
-      setSentUpdate(true);
-      return;
-    }
+      // If DB already matches gateway status, skip
+      if (transaction?.status && transaction.status.toUpperCase() === urlStatus.toUpperCase()) {
+        setSentUpdate(true);
+        return;
+      }
 
-    try {
-      // Build payload to match the shape your handleCallback expects:
-      const order_info = {
-        order_id: orderId,
-        status: urlStatus,
-        transaction_amount: transaction?.transaction_amount ?? (transaction?.order_amount ?? (amount ? Number(amount) : 0)),
-        payment_mode: transaction?.payment_mode ?? undefined,
-        payment_details: transaction?.payment_details ?? undefined,
-        bank_reference: transaction?.bank_reference ?? undefined,
-        payment_message: '',
-        error_message: transaction?.error_message ?? '',
-        payment_time: transaction?.payment_time ?? new Date().toISOString(),
-      };
+      try {
+        // Build payload to match the shape your handleCallback expects:
+        const order_info = {
+          order_id: orderId,
+          status: urlStatus,
+          transaction_amount: transaction?.transaction_amount ?? (transaction?.order_amount ?? (amount ? Number(amount) : 0)),
+          payment_mode: transaction?.payment_mode ?? undefined,
+          payment_details: transaction?.payment_details ?? undefined,
+          bank_reference: transaction?.bank_reference ?? undefined,
+          payment_message: '',
+          error_message: transaction?.error_message ?? '',
+          payment_time: transaction?.payment_time ?? new Date().toISOString(),
+        };
 
-      await paymentsAPI.sendWebhookPayload({ order_info });
+        await paymentsAPI.sendWebhookPayload({ order_info });
 
-      // refresh local view from DB after backend processes it
-      await fetchTransactionDetails(orderId);
-    } catch (err) {
-      console.error('Failed to notify backend webhook', err);
-    } finally {
-      setSentUpdate(true);
-    }
-  };
+        // refresh local view from DB after backend processes it
+        await fetchTransactionDetails(orderId);
+      } catch (err) {
+        console.error('Failed to notify backend webhook', err);
+      } finally {
+        setSentUpdate(true);
+      }
+    };
 
-  if (!sentUpdate) doUpdate();
-}, [orderId, urlStatus, transaction, amount, sentUpdate]);
+    if (!sentUpdate) doUpdate();
+  }, [orderId, urlStatus, transaction, amount, sentUpdate]);
 
 
   // Use URL status as priority, fallback to transaction status
@@ -193,7 +194,7 @@ const PaymentCallback: React.FC = () => {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
             {/* Status Icon */}
             {getStatusIcon(currentStatus)}
-            
+
             {/* Status Message */}
             <div className="text-center mb-8">
               <h1 className={`text-2xl font-bold mb-2 ${statusInfo.color}`}>
@@ -215,7 +216,7 @@ const PaymentCallback: React.FC = () => {
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                   Transaction Details
                 </h2>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {orderId && (
                     <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded">
@@ -223,7 +224,7 @@ const PaymentCallback: React.FC = () => {
                       <p className="text-sm text-gray-900 dark:text-gray-100 font-mono">{orderId}</p>
                     </div>
                   )}
-                  
+
                   {(transaction?.order_amount || amount) && (
                     <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded">
                       <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Amount</p>
@@ -232,7 +233,7 @@ const PaymentCallback: React.FC = () => {
                       </p>
                     </div>
                   )}
-                  
+
                   {transaction?.transaction_amount && transaction.transaction_amount !== transaction.order_amount && (
                     <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded">
                       <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Transaction Amount</p>
@@ -241,7 +242,16 @@ const PaymentCallback: React.FC = () => {
                       </p>
                     </div>
                   )}
-                  
+
+                  {transaction?.school_id && transaction.school_id !== "0" ? (
+                    <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded">
+                      <p className="text-sm font-medium text-gray-500 dark:text-gray-400">School ID</p>
+                      <p className="text-sm text-gray-900 dark:text-gray-100 font-mono">{transaction.school_id}</p>
+                    </div>
+                  ) : null}
+
+
+
                   <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded">
                     <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Status</p>
                     <p className={`text-sm font-semibold ${statusInfo.color}`}>
@@ -253,7 +263,7 @@ const PaymentCallback: React.FC = () => {
                       </p>
                     )}
                   </div>
-                  
+
                   {transaction?.payment_time && (
                     <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded">
                       <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Payment Time</p>
@@ -262,7 +272,7 @@ const PaymentCallback: React.FC = () => {
                       </p>
                     </div>
                   )}
-                  
+
                   {transaction?.payment_mode && (
                     <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded">
                       <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Payment Mode</p>
@@ -271,7 +281,7 @@ const PaymentCallback: React.FC = () => {
                       </p>
                     </div>
                   )}
-                  
+
                   {transaction?.bank_reference && (
                     <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded">
                       <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Bank Reference</p>
@@ -281,7 +291,7 @@ const PaymentCallback: React.FC = () => {
                     </div>
                   )}
                 </div>
-                
+
                 {transaction?.error_message && transaction.error_message !== 'NA' && (
                   <div className="mt-4 p-3 bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-700 rounded">
                     <p className="text-sm font-medium text-red-800 dark:text-red-200">Error Details</p>
@@ -306,14 +316,14 @@ const PaymentCallback: React.FC = () => {
               >
                 View All Transactions
               </button>
-              
+
               <button
                 onClick={() => navigate('/create-payment')}
                 className="flex-1 bg-gray-600 dark:bg-gray-700 text-white py-2 px-4 rounded-md hover:bg-gray-700 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
               >
                 Create New Payment
               </button>
-              
+
               {transaction && (
                 <button
                   onClick={refreshStatus}
