@@ -234,14 +234,14 @@ const PaymentCallback: React.FC = () => {
                     </div>
                   )}
 
-                  {transaction?.transaction_amount && transaction.transaction_amount !== transaction.order_amount && (
+                  {/* {transaction?.transaction_amount && transaction.transaction_amount !== transaction.order_amount && (
                     <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded">
                       <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Transaction Amount</p>
                       <p className="text-sm text-gray-900 dark:text-gray-100">
                         ₹{transaction.transaction_amount}
                       </p>
                     </div>
-                  )}
+                  )} */}
 
                   {transaction?.school_id && transaction.school_id !== "0" ? (
                     <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded">
@@ -264,32 +264,32 @@ const PaymentCallback: React.FC = () => {
                     )}
                   </div>
 
-                  {transaction?.payment_time && (
+                  {/* {transaction?.payment_time && (
                     <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded">
                       <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Payment Time</p>
                       <p className="text-sm text-gray-900 dark:text-gray-100">
                         {new Date(transaction.payment_time).toLocaleString()}
                       </p>
                     </div>
-                  )}
+                  )} */}
 
-                  {transaction?.payment_mode && (
+                  {/* {transaction?.payment_mode && (
                     <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded">
                       <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Payment Mode</p>
                       <p className="text-sm text-gray-900 dark:text-gray-100">
                         {transaction.payment_mode}
                       </p>
                     </div>
-                  )}
+                  )} */}
 
-                  {transaction?.bank_reference && (
+                  {/* {transaction?.bank_reference && (
                     <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded">
                       <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Bank Reference</p>
                       <p className="text-sm text-gray-900 dark:text-gray-100 font-mono">
                         {transaction.bank_reference}
                       </p>
                     </div>
-                  )}
+                  )} */}
                 </div>
 
                 {transaction?.error_message && transaction.error_message !== 'NA' && (
