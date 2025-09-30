@@ -264,14 +264,14 @@ const PaymentCallback: React.FC = () => {
                     )}
                   </div>
 
-                  {/* {transaction?.payment_time && (
+                  {transaction?.payment_time && (
                     <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded">
                       <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Payment Time</p>
                       <p className="text-sm text-gray-900 dark:text-gray-100">
                         {new Date(transaction.payment_time).toLocaleString()}
                       </p>
                     </div>
-                  )} */}
+                  )}
 
                   {/* {transaction?.payment_mode && (
                     <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded">
