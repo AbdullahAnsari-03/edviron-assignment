@@ -1,7 +1,5 @@
 # 🏫 Edviron School-Payments Portal  
-> Full-stack MERN assignment – NestJS REST API + React dashboard with live payment gateway integration.
 
----
 
 ## 🔗 Quick Links
 |  | URL |
@@ -118,6 +116,36 @@ Sure — replace the Mermaid diagram with a clean, expandable folder-tree that m
 Swap this block into the README where the Mermaid section was:
 
 ---
+## 🖼️ Screenshots / Demo
+
+### 1. Registration Page
+![Register](screenshots/register.png)
+
+### 2. Login Page
+![Login](screenshots/login.png)
+
+### 3. Dashboard
+![Dashboard](screenshots/dashboard.png)
+![Dashboard 2](screenshots/dashboard-2.png)
+
+### 4. School Transactions
+![School Transactions](screenshots/school-transactions.png)
+
+### 5. Check Status
+![Check Status](screenshots/check-status.png)
+
+### 6. Create Payment
+![Create Payment](screenshots/create-payment.png)
+
+### 7. Payment Creation Confirmation
+![Payment Creation](screenshots/payment-creation.png)
+
+### 8. Edviron Gateway
+![Edviron Gateway](screenshots/edviron-gateway.png)
+
+### 9. Payment Successful
+![Payment Successful](screenshots/payment-successfull.png)
+
 
 ## 📁 Project Tree
 ```
